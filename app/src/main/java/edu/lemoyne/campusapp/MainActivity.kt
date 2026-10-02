@@ -50,7 +50,7 @@ class MainActivity : ComponentActivity() {
 // ---Class 7: Step 1: a counter that remembers
 @Composable
 fun CounterDemo() {
-    var count by remember { mutableStateOf(0)}
+    var count by remember { mutableStateOf(0) }
 
     Button(onClick = {
         count++
@@ -59,6 +59,7 @@ fun CounterDemo() {
         Text("Tapped $count times")
     }
 }
+
 // --- Class 6 ~ Step 1: my own screen --
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
@@ -94,6 +95,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .padding(24.dp)
     ) {
+        CounterDemo()
         // --- Lab 6 ~ task 3: a picture of my own ---
         Image(
             painter = painterResource(id = R.drawable.koenkayakesmall),
@@ -122,6 +124,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             label = { Text("Port name") },
             modifier = Modifier.fillMaxWidth()
         )
+        // --- Lab 7 ~ Task 4: a live character counter ---
+        Text(
+            text = "${newPort.length} / 40",
+            fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
         // --- Class 7~ Step 4: the button changes the state ---
@@ -130,6 +138,20 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             newPort = ""
         }) {
             Text("Add Port")
+        }
+        // --- Lab 7 ~ Task 1: remove the last item ---
+        Button(onClick = {
+            if (ports.isNotEmpty()) {
+                ports.removeAt(ports.lastIndex)
+            }
+        }) {
+            Text("Remove last")
+        }
+        // --- Lab 7 ~ Task 3: clear all ---
+        Button(onClick = {
+            ports.clear()
+        }) {
+            Text("Clear all")
         }
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -141,7 +163,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         )
         // --- Class 7 ~ Step 2: draw whatever is in the list ---
         Text(
-            text = "${ports.size} Ports:",
+            // --- Lab 7 ~ Task 2: singular and plural ---
+            text = if (ports.size == 1) "1 Port" else "${ports.size} Ports",
             fontWeight = FontWeight.Bold
         )
         for (port in ports) {
