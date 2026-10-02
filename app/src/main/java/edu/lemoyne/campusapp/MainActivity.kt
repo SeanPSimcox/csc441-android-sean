@@ -12,11 +12,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -40,9 +47,47 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// ---Class 7: Step 1: a counter that remembers
+@Composable
+fun CounterDemo() {
+    var count by remember { mutableStateOf(0)}
+
+    Button(onClick = {
+        count++
+        println("count is now $count")
+    }) {
+        Text("Tapped $count times")
+    }
+}
 // --- Class 6 ~ Step 1: my own screen --
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
+    // ---Class 7: Step 2: The list lives in state ---
+    val ports = remember {
+        mutableStateListOf(
+            "*FTP - Port 20/21 - TCP",
+            "*SSH - Port 22 - TCP",
+            "*Telnet - Port 23 - TCP",
+            "*SMTP - Port 25 - TCP",
+            "*SMB - Port 445 - TCP",
+            "*DNS - Port 53 - TCP/UDP",
+            "*DHCP - Port 67/68 - UDP",
+            "*TFTP - Port 69 - UDP",
+            "*HTTP - Port 80 - TCP",
+            "*POP3 - Port 110 - TCP",
+            "*NTP - Port 123 - UDP",
+            "*IMAP4 - Port 143 - TCP",
+            "*SNMP - Port 161/162 - UDP",
+            "*LDAP - Port 389 - TCP/UDP",
+            "*HTTPS - Port 443 - TCP",
+            "*LDAPS - Port 636 - TCP",
+            "*NFS - Port 2049 - TCP/UDP",
+            "*RDP - Port 3389 - TCP"
+        )
+    }
+    // --- Class 7 ~ Step 3: what's typed lives in state ---
+    var newPort by remember { mutableStateOf("") }
+
     // --- Class 6 ~ Step 3: a column, so things stack ---
     Column(
         modifier = modifier
@@ -61,7 +106,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- Class 6 ~ Step 4: real styling ---
+        // --- Class 6 ~ Step 4: real styling (subtitle)---
         Text(
             text = "Common Network Ports",
             fontSize = 32.sp,
@@ -70,33 +115,38 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = "18 well-known network services",
-            fontSize = 16.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+        // --- Class 7 ~ Step 3: the text field ---
+        OutlinedTextField(
+            value = newPort,
+            onValueChange = { newPort = it },
+            label = { Text("Port name") },
+            modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+        // --- Class 7~ Step 4: the button changes the state ---
+        Button(onClick = {
+            ports.add(newPort)
+            newPort = ""
+        }) {
+            Text("Add Port")
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(text = "FTP - Port 20/21 - TCP", fontSize = 18.sp)
-        Text(text = "SSH - Port 22 - TCP", fontSize = 18.sp)
-        Text(text = "Telnet - Port 23 - TCP", fontSize = 18.sp)
-        Text(text = "SMTP - Port 25 - TCP", fontSize = 18.sp)
-        Text(text = "DNS - Port 53 - TCP/UDP", fontSize = 18.sp)
-        Text(text = "DHCP - Port 67/68 - UDP", fontSize = 18.sp)
-        Text(text = "TFTP - Port 69 - UDP", fontSize = 18.sp)
-        Text(text = "HTTP - Port 80 - TCP", fontSize = 18.sp)
-        Text(text = "POP3 - Port 110 - TCP", fontSize = 18.sp)
-        Text(text = "NTP - Port 123 - UDP", fontSize = 18.sp)
-        Text(text = "IMAP4 - Port 143 - TCP", fontSize = 18.sp)
-        Text(text = "SNMP - Port 161/162 - UDP", fontSize = 18.sp)
-        Text(text = "LDAP - Port 389 - TCP/UDP", fontSize = 18.sp)
-        Text(text = "HTTPS - Port 443 - TCP", fontSize = 18.sp)
-        Text(text = "SMB - Port 445 - TCP", fontSize = 18.sp)
-        Text(text = "LDAPS - Port 636 - TCP", fontSize = 18.sp)
-        Text(text = "NFS - Port 2049 - TCP/UDP", fontSize = 18.sp)
-        Text(text = "RDP - Port 3389 - TCP", fontSize = 18.sp)
-
+        Text(
+            text = "Well-known network services",
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        // --- Class 7 ~ Step 2: draw whatever is in the list ---
+        Text(
+            text = "${ports.size} Ports:",
+            fontWeight = FontWeight.Bold
+        )
+        for (port in ports) {
+            Text(text = port, fontSize = 18.sp)
+        }
         // --- Lab 6 ~ Task 2: Footer ---
         Spacer(modifier = Modifier.height(24.dp))
 
