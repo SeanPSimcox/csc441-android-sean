@@ -1,6 +1,7 @@
 package edu.lemoyne.campusapp
 
 import android.content.res.Configuration
+import androidx.compose.ui.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -134,13 +135,15 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         error?.let { message ->
             Text(
                 text = message,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                // --- Lab 8 ~ Task 3: show errors in red ---
+                color = Color.Red
             )
         }
 
         // --- Lab 7 ~ Task 4: a live character counter ---
         Text(
-            text = "${newPort.length} / 40",
+            // --- Lab 8 ~ Task 4: change length to MAX ---
+            text = "${newPort.length} / $MAX_NAME_LENGTH",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -212,7 +215,11 @@ fun validatePortName(input: String, existingPorts: List<String>): String? {
     val name = input.trim()
     return when {
         name.isEmpty() -> "Enter a Port name"
+        // --- Lab 8 ~ Task 1: minimum length rule ---
+        name.length < 3 -> "Port name must be at least 3 characters"
         name.length > MAX_NAME_LENGTH -> "Keep it less than or equal to $MAX_NAME_LENGTH characters"
+        // --- Lab 8 ~ Task 2: custom validation rule ---
+        !name.any { it.isLetter() } -> "A port entry must contain at least one service name"
         existingPorts.any { it.equals(name, ignoreCase = true) } -> "$name already exists"
         else -> null
     }
