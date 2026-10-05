@@ -1,6 +1,7 @@
 package edu.lemoyne.campusapp
 
 import android.content.res.Configuration
+import androidx.compose.ui.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -88,14 +89,15 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     }
     // --- Class 7 ~ Step 3: what's typed lives in state ---
     var newPort by remember { mutableStateOf("") }
-
+    // --- Class 8 ~ Step 2: the error message lives in state 2
+    var error by remember {mutableStateOf<String?>(null)}
     // --- Class 6 ~ Step 3: a column, so things stack ---
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(24.dp)
     ) {
-        CounterDemo()
+//        CounterDemo()
         // --- Lab 6 ~ task 3: a picture of my own ---
         Image(
             painter = painterResource(id = R.drawable.koenkayakesmall),
@@ -120,23 +122,47 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         // --- Class 7 ~ Step 3: the text field ---
         OutlinedTextField(
             value = newPort,
-            onValueChange = { newPort = it },
+            // --- Class 8 ~ Step 3: the field itself pushes back
+            onValueChange = {
+                newPort = it.take(n = MAX_NAME_LENGTH)
+                error = null
+            },
             label = { Text("Port name") },
+            singleLine = true,
+            isError = error != null,
             modifier = Modifier.fillMaxWidth()
         )
+        error?.let { message ->
+            Text(
+                text = message,
+                // --- Lab 8 ~ Task 3: show errors in red ---
+                color = Color.Red
+            )
+        }
+
         // --- Lab 7 ~ Task 4: a live character counter ---
         Text(
-            text = "${newPort.length} / 40",
+            // --- Lab 8 ~ Task 4: change length to MAX ---
+            text = "${newPort.length} / $MAX_NAME_LENGTH",
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(8.dp))
-        // --- Class 7~ Step 4: the button changes the state ---
+        // --- Class 7 ~ Step 4: the button changes the state ---
         Button(onClick = {
-            ports.add(newPort)
-            newPort = ""
-        }) {
+            // --- Class 8 ~ Step 3: check before you add ---
+            val problem = validatePortName(newPort, ports)
+            if (problem == null) {
+                ports.add(newPort)
+                newPort = ""
+            } else {
+                error = problem
+            }
+        },
+            // --- Class 8 ~ Step 4: the sign on the door, not the lock ---
+            enabled = newPort.isNotBlank()
+            ) {
             Text("Add Port")
         }
         // --- Lab 7 ~ Task 1: remove the last item ---
@@ -179,6 +205,23 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+    }
+}
+
+const val MAX_NAME_LENGTH = 30
+
+// --- Class 8 ~ Step 1: one rule book for trail names ---
+fun validatePortName(input: String, existingPorts: List<String>): String? {
+    val name = input.trim()
+    return when {
+        name.isEmpty() -> "Enter a Port name"
+        // --- Lab 8 ~ Task 1: minimum length rule ---
+        name.length < 3 -> "Port name must be at least 3 characters"
+        name.length > MAX_NAME_LENGTH -> "Keep it less than or equal to $MAX_NAME_LENGTH characters"
+        // --- Lab 8 ~ Task 2: custom validation rule ---
+        !name.any { it.isLetter() } -> "A port entry must contain at least one service name"
+        existingPorts.any { it.equals(name, ignoreCase = true) } -> "$name already exists"
+        else -> null
     }
 }
 

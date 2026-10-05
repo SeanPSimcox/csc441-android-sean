@@ -17,3 +17,10 @@ Week 6, Wednesday.
 know the screen needed to update
 3) Remember stores the status of variable so when things reload there values aren't lost. The values
 would be lost otherwise.
+
+Week 6, Friday.
+1) I added a rule requiring at least one letter because a network port entry should identify a service
+and not only a numeric port value. Entries such as "443" or "3389" alone are less descriptive than 
+including the service name.
+2) The conditions in a when statement are evaluated from top to bottom. The first condition that
+evaluates to true runs, so the order of the conditions matters.
