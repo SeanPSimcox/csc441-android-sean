@@ -32,6 +32,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import edu.lemoyne.campusapp.ui.theme.CampusAppTheme
 
+const val MAX_NAME_LENGTH = 30
+// --- Class 8 ~ Step 1: one rule book for trail names ---
+fun validatePortName(input: String, existingPorts: List<String>): String? {
+    val name = input.trim()
+    return when {
+        name.isEmpty() -> "Enter a Port name"
+        // --- Lab 8 ~ Task 1: minimum length rule ---
+        name.length < 3 -> "Port name must be at least 3 characters"
+        name.length > MAX_NAME_LENGTH -> "Keep it less than or equal to $MAX_NAME_LENGTH characters"
+        // --- Lab 8 ~ Task 2: custom validation rule ---
+        !name.any { it.isLetter() } -> "A port entry must contain at least one service name"
+        existingPorts.any { it.equals(name, ignoreCase = true) } -> "$name already exists"
+        else -> null
+    }
+}
 
 // ---Class 7: Step 1: a counter that remembers
 @Composable
@@ -80,10 +95,17 @@ fun CampusAppScreen(modifier: Modifier = Modifier){
         "home" -> HomeScreen(
             ports = ports,
             onAddPort = { ports.add(it) },
-            onSeeAll = { currentScreen = "list"}
+            onSeeAll = { currentScreen = "list" },
+            // --- Lab 9 ~ Task 2: HomeScreen can request the About screen ---
+            onAbout = { currentScreen = "about"}
         )
         "list" -> ListScreen(
             ports = ports,
+            onBack = { currentScreen = "home" },
+            modifier = modifier
+        )
+        // --- Lab 9 ~ Task 2: add the About screen to navigation ---
+        "about" -> AboutScreen(
             onBack = { currentScreen = "home" },
             modifier = modifier
         )
@@ -97,6 +119,8 @@ fun HomeScreen(
     ports: MutableList<String>,
     onAddPort: (String) -> Unit,
     onSeeAll: () -> Unit,
+    // --- Lab 9 ~ Task 2: a way to the About screen ---
+    onAbout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     // --- Class 7 ~ Step 3: what's typed lives in state ---
@@ -113,7 +137,7 @@ fun HomeScreen(
         // --- Lab 6 ~ task 3: a picture of my own ---
         Image(
             painter = painterResource(id = R.drawable.koenkayakesmall),
-            contentDescription = "Kayake to your proper port",
+            contentDescription = "Kayak to your proper port",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
@@ -124,7 +148,7 @@ fun HomeScreen(
 
         // --- Class 6 ~ Step 4: real styling (subtitle)---
         Text(
-            text = "Common Network Ports",
+            text = "Network Port Reference",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold
         )
@@ -134,7 +158,7 @@ fun HomeScreen(
         // --- Class 7 ~ Step 3: the text field ---
         OutlinedTextField(
             value = newPort,
-            // --- Class 8 ~ Step 3: the field itself pushes back
+            // --- Class 8 ~ Step 3: the field itself pushes back ---
             onValueChange = {
                 newPort = it.take(n = MAX_NAME_LENGTH)
                 error = null
@@ -187,24 +211,22 @@ fun HomeScreen(
             Text("Remove last")
         }
         // --- Lab 7 ~ Task 3: clear all ---
-
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Well-known network services",
+            text = "Documented Ports",
             fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         // --- Class 7 ~ Step 2: draw whatever is in the list ---
         Text(
             // --- Lab 7 ~ Task 2: singular and plural ---
-            text = if (ports.size == 1) "1 Port" else "${ports.size} Ports",
+            text = if (ports.size != 1) "${ports.size} ports" else "1 port",
             fontWeight = FontWeight.Bold
         )
-
-        // --- Class 9 ~ Step 5: a way to the second screen
+        // --- Class 9 ~ Step 5: a way to the second screen ---
         Button(onClick = onSeeAll) {
-            Text(text = "See all the ports")
+            Text(text = "See all ports")
         }
         // --- Lab 6 ~ Task 2: Footer ---
         Spacer(modifier = Modifier.height(24.dp))
@@ -214,11 +236,15 @@ fun HomeScreen(
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        // --- Lab 9 ~ Task 2: the About button ---
+        Button(onClick = onAbout) {
+            Text(text = "About")
+        }
 
     }
 }
 
-// --- Class 9 Step 3: second screen
+// --- Class 9 Step 3: second screen ---
 @Composable
 fun ListScreen(
     ports: List<String>,
@@ -238,10 +264,17 @@ fun ListScreen(
         }
 
         Text(
-            text = "All ports",
+            text = "Ports List:",
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold
         )
+
+        Text( text = "Well-known ports: *",
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
+
+        // --- Lab 9 ~ Task 1: count on the list screen ---
+        Text( text = "Total: ${ports.size}",
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -251,21 +284,36 @@ fun ListScreen(
     }
 }
 
-const val MAX_NAME_LENGTH = 30
+// --- Lab 9 ~ Task 2: a third screen ---
+@Composable
+fun AboutScreen(
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    BackHandler { onBack() }
 
-// --- Class 8 ~ Step 1: one rule book for trail names ---
-fun validatePortName(input: String, existingPorts: List<String>): String? {
-    val name = input.trim()
-    return when {
-        name.isEmpty() -> "Enter a Port name"
-        // --- Lab 8 ~ Task 1: minimum length rule ---
-        name.length < 3 -> "Port name must be at least 3 characters"
-        name.length > MAX_NAME_LENGTH -> "Keep it less than or equal to $MAX_NAME_LENGTH characters"
-        // --- Lab 8 ~ Task 2: custom validation rule ---
-        !name.any { it.isLetter() } -> "A port entry must contain at least one service name"
-        existingPorts.any { it.equals(name, ignoreCase = true) } -> "$name already exists"
-        else -> null
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(24.dp)
+    ){
+        TextButton(onClick = onBack) {
+            Text("Back")
+        }
+
+        Text(
+            text = "About",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "Common Network Ports keeps track of common networking ports as well as any" +
+                " additional ports worth mentioning.")
+        Text(text = "Built for CSC 441 by Sean P Simcox")
     }
+
 }
 
 // --- Class 6 ~ Step 2: preview, no build required ---
@@ -294,8 +342,9 @@ fun HomeScreenPreview() {
                 "*NFS - Port 2049 - TCP/UDP",
                 "*RDP - Port 3389 - TCP")
         },
-        onAddPort = {},
-        onSeeAll = {}
+            onAddPort = {},
+            onSeeAll = {},
+            onAbout = {}
 
         )
     }
@@ -361,7 +410,8 @@ fun HomeScreenDarkPreview() {
                     "*RDP - Port 3389 - TCP")
             },
                 onAddPort = {},
-                onSeeAll = {}
+                onSeeAll = {},
+                onAbout = {}
 
             )
         }
