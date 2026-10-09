@@ -24,3 +24,9 @@ and not only a numeric port value. Entries such as "443" or "3389" alone are les
 including the service name.
 2) The conditions in a when statement are evaluated from top to bottom. The first condition that
 evaluates to true runs, so the order of the conditions matters.
+
+Week 7, Wednesday.
+1) I rotated the homescreen, and was on the homescreen.
+2) No, I lost anything that didn't fit on the screen.
+3) currentScreen survives rotation because it uses rememberSaveable, while added ports are lost
+because the ports list only uses remember.
