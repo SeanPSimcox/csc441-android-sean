@@ -9,12 +9,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -22,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -30,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.Alignment
 import edu.lemoyne.campusapp.ui.theme.CampusAppTheme
 
 const val MAX_NAME_LENGTH = 30
@@ -84,8 +91,8 @@ fun CampusAppScreen(modifier: Modifier = Modifier){
             "*HTTPS - Port 443 - TCP",
             "*LDAPS - Port 636 - TCP",
             "*NFS - Port 2049 - TCP/UDP",
-            "*RDP - Port 3389 - TCP"
-        )
+            "*RDP - Port 3389 - TCP")
+
     }
 
     // --- Class 9 ~ Step 4: which screen is showing is just state ---
@@ -102,6 +109,8 @@ fun CampusAppScreen(modifier: Modifier = Modifier){
         "list" -> ListScreen(
             ports = ports,
             onBack = { currentScreen = "home" },
+            // --- Class 10 ~ Step 4: only the owner changes the list ---
+            onRemove = { ports.remove(it) },
             modifier = modifier
         )
         // --- Lab 9 ~ Task 2: add the About screen to navigation ---
@@ -249,15 +258,17 @@ fun HomeScreen(
 fun ListScreen(
     ports: List<String>,
     onBack: () -> Unit,
+    onRemove: (String) -> Unit,
     modifier:Modifier = Modifier
 ) {
+
     // --- Class 9 ~ Step 6: the phone's back button goes home too ---
     BackHandler { onBack() }
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(24.dp)
+            .fillMaxSize()
+            .padding(horizontal = 24.dp)
     ) {
         TextButton(onClick = onBack) {
             Text(text = "back")
@@ -278,8 +289,49 @@ fun ListScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        for (port in ports) {
-            Text(text = port, fontSize = 18.sp)
+//        for (port in ports) {
+//            Text(text = port, fontSize = 18.sp)
+        // --- Class 10 ~ Step 5: the empty case ---
+        if(ports.isEmpty()) {
+            Text(
+                text = "No ports yet. Add one on the home screen",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            } else {
+        // --- Class 10 ~ Step 2: a list that scrolls ---
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+                items(ports) { port ->
+                    PortRow(
+                        name = port,
+                        onRemove = { onRemove(port) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+// --- Class 10 ~ Step 3: one row, as its own Composable ---
+@Composable
+fun PortRow(name: String, onRemove: () -> Unit) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = name,
+                fontSize = 18.sp,
+                modifier = Modifier.weight(1f)
+
+            )
+
+            // --- Class 10 ~ Step 4: a remove button on every row ---
+            TextButton(onClick = onRemove) {
+                Text("Remove")
+            }
         }
     }
 }
@@ -314,6 +366,19 @@ fun AboutScreen(
         Text(text = "Built for CSC 441 by Sean P Simcox")
     }
 
+}
+
+// --- Class 10 ~ Step 5: preview the empty case too ---
+@Preview(showBackground = true)
+@Composable
+fun ListScreenEmptyPreview() {
+    CampusAppTheme {
+        ListScreen(
+            ports = emptyList(),
+            onBack = {},
+            onRemove = {}
+        )
+    }
 }
 
 // --- Class 6 ~ Step 2: preview, no build required ---
@@ -377,7 +442,8 @@ fun ListScreenPreview(){
                     "*NFS - Port 2049 - TCP/UDP",
                     "*RDP - Port 3389 - TCP")
             },
-            onBack = {}
+            onBack = {},
+            onRemove = {}
         )
     }
 }
