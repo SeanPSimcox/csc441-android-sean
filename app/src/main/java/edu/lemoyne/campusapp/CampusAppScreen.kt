@@ -400,20 +400,6 @@ fun AboutScreen(
 
 }
 
-// --- Class 10 ~ Step 5: preview the empty case too ---
-@Preview(showBackground = true)
-@Composable
-fun ListScreenEmptyPreview() {
-    CampusAppTheme {
-        ListScreen(
-            ports = emptyList(),
-            onBack = {},
-            onRemove = {},
-            onRemoveAll = {}
-        )
-    }
-}
-
 // --- Class 6 ~ Step 2: preview, no build required ---
 @Preview(showBackground = true)
 @Composable
@@ -446,41 +432,6 @@ fun HomeScreenPreview() {
             onSeeAll = {},
             onAbout = {}
 
-        )
-    }
-}
-
-// --- Class 9 ~ Step 7: preview the list screen ---
-@Preview(showBackground = true)
-@Composable
-fun ListScreenPreview() {
-    CampusAppTheme {
-        ListScreen(
-            ports = remember {
-                mutableStateListOf(
-                    "*FTP - Port 20/21 - TCP",
-                    "*SSH - Port 22 - TCP",
-                    "*Telnet - Port 23 - TCP",
-                    "*SMTP - Port 25 - TCP",
-                    "*SMB - Port 445 - TCP",
-                    "*DNS - Port 53 - TCP/UDP",
-                    "*DHCP - Port 67/68 - UDP",
-                    "*TFTP - Port 69 - UDP",
-                    "*HTTP - Port 80 - TCP",
-                    "*POP3 - Port 110 - TCP",
-                    "*NTP - Port 123 - UDP",
-                    "*IMAP4 - Port 143 - TCP",
-                    "*SNMP - Port 161/162 - UDP",
-                    "*LDAP - Port 389 - TCP/UDP",
-                    "*HTTPS - Port 443 - TCP",
-                    "*LDAPS - Port 636 - TCP",
-                    "*NFS - Port 2049 - TCP/UDP",
-                    "*RDP - Port 3389 - TCP"
-                )
-            },
-            onBack = {},
-            onRemove = {},
-            onRemoveAll = {},
         )
     }
 }
@@ -520,5 +471,62 @@ fun HomeScreenDarkPreview() {
 
             )
         }
+    }
+}
+
+// --- Class 9 ~ Step 7: preview the list screen ---
+@Preview(showBackground = true)
+@Composable
+fun ListScreenPreview() {
+    CampusAppTheme {
+        ListScreen(
+            ports = remember {
+                mutableStateListOf(
+                    "*FTP - Port 20/21 - TCP",
+                    "*SSH - Port 22 - TCP",
+                    "*Telnet - Port 23 - TCP",
+                    "*SMTP - Port 25 - TCP",
+                    "*SMB - Port 445 - TCP",
+                    "*DNS - Port 53 - TCP/UDP",
+                    "*DHCP - Port 67/68 - UDP",
+                    "*TFTP - Port 69 - UDP",
+                    "*HTTP - Port 80 - TCP",
+                    "*POP3 - Port 110 - TCP",
+                    "*NTP - Port 123 - UDP",
+                    "*IMAP4 - Port 143 - TCP",
+                    "*SNMP - Port 161/162 - UDP",
+                    "*LDAP - Port 389 - TCP/UDP",
+                    "*HTTPS - Port 443 - TCP",
+                    "*LDAPS - Port 636 - TCP",
+                    "*NFS - Port 2049 - TCP/UDP",
+                    "*RDP - Port 3389 - TCP"
+                )
+            },
+            onBack = {},
+            onRemove = {},
+            onRemoveAll = {},
+        )
+    }
+}
+
+// --- Class 10 ~ Step 5: preview the empty case too ---
+@Preview(showBackground = true)
+@Composable
+fun ListScreenEmptyPreview() {
+    CampusAppTheme {
+        ListScreen(
+            ports = emptyList(),
+            onBack = {},
+            onRemove = {},
+            onRemoveAll = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AboutScreenPreview() {
+    CampusAppTheme {
+        AboutScreen(onBack = {})
     }
 }
