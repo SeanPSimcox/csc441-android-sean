@@ -1,6 +1,6 @@
 package edu.lemoyne.campusapp
 
-import com.google.gson.annotations.SerializeName
+import com.google.gson.annotations.SerializedName
 
 data class ShowcaseItem (
 

@@ -30,3 +30,15 @@ Week 7, Wednesday.
 2) No, I lost anything that didn't fit on the screen.
 3) currentScreen survives rotation because it uses rememberSaveable, while added ports are lost
 because the ports list only uses remember.
+
+Week 13, Wednesday.
+1) LaunchedEffect(Unit) runs when the Interests screen opens and calls onRefresh(), which starts the
+ refresh process.
+2) The Refresh items button calls onRefresh(), which runs refresh() again and reloads the data.
+3) I passed a callback instead of the ViewModel because the screen only needs a way to refresh the
+ data. It doesn't need to know anything about how the data is being managed behind the scenes.
+4) An empty [] response means the request worked but there wasn't any data to return. A network
+ failure means the app couldn't connect to the server, so it shows an error instead.
+5) I verified that both the Android app and website were connected to the same Supabase project.
+ During testing, the project was paused, which also confirmed the app's error handling was working
+ correctly.

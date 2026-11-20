@@ -1,5 +1,7 @@
 package edu.lemoyne.campusapp
 
+import androidx.activity.viewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import android.content.res.Configuration
 import androidx.compose.ui.graphics.Color
 import android.os.Bundle
@@ -35,13 +37,20 @@ import androidx.compose.ui.unit.sp
 import edu.lemoyne.campusapp.ui.theme.CampusAppTheme
 
 class MainActivity : ComponentActivity() {
+    private val showcaseViewModel: ShowcaseViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        showcaseViewModel.refresh()
         enableEdgeToEdge()
         setContent {
+            val showcaseState by showcaseViewModel.state.collectAsStateWithLifecycle()
             CampusAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CampusAppScreen(modifier = Modifier.padding(innerPadding))
+                    CampusAppScreen(
+                        showcaseState = showcaseState,
+                        onRefreshShowcase = showcaseViewModel::refresh,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }

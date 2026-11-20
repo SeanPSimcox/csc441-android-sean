@@ -71,7 +71,7 @@ fun CounterDemo() {
 
 // --- Class 9 ~ Step 2: one owner for the data
 @Composable
-fun CampusAppScreen(modifier: Modifier = Modifier) {
+fun CampusAppScreen(showcaseState: ShowcaseUiState, onRefreshShowcase: () -> Unit, modifier: Modifier = Modifier) {
     // ---Class 7: Step 2: The list lives in state ---
     val ports = remember {
         mutableStateListOf(
@@ -106,7 +106,8 @@ fun CampusAppScreen(modifier: Modifier = Modifier) {
             onAddPort = { ports.add(it) },
             onSeeAll = { currentScreen = "list" },
             // --- Lab 9 ~ Task 2: HomeScreen can request the About screen ---
-            onAbout = { currentScreen = "about" }
+            onAbout = { currentScreen = "about" },
+            onInterestsClick = {currentScreen = "interests"}
         )
 
         "list" -> ListScreen(
@@ -123,6 +124,13 @@ fun CampusAppScreen(modifier: Modifier = Modifier) {
             onBack = { currentScreen = "home" },
             modifier = modifier
         )
+
+        "interests" -> InterestsScreen(
+            state = showcaseState,
+            onBack = {currentScreen = "home" },
+            onRefresh = onRefreshShowcase,
+            modifier = modifier
+        )
     }
 
 }
@@ -135,7 +143,9 @@ fun HomeScreen(
     onSeeAll: () -> Unit,
     // --- Lab 9 ~ Task 2: a way to the About screen ---
     onAbout: () -> Unit,
+    onInterestsClick: () -> Unit = {},
     modifier: Modifier = Modifier
+
 ) {
     // --- Class 7 ~ Step 3: what's typed lives in state ---
     var newPort by remember { mutableStateOf("") }
@@ -252,8 +262,8 @@ fun HomeScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         // --- Lab 9 ~ Task 2: the About button ---
-        Button(onClick = onAbout) {
-            Text(text = "About")
+        Button(onClick = onInterestsClick) {
+            Text("My Interests")
         }
 
     }
