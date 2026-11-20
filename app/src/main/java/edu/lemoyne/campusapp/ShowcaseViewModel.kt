@@ -14,17 +14,26 @@ sealed class ShowcaseUiState {
 class ShowcaseViewModel: ViewModel() {
     private val repository = ShowcaseRepository()
 
-    private val _state = MutableStateFlow<ShowcaseUiState>(ShowcaseUiState.Loading)
-    val state = _state.asStateFlow()
+    private val _uiState = MutableStateFlow<ShowcaseUiState>(ShowcaseUiState.Loading)
+    val state = _uiState.asStateFlow()
+    private var accessToken: String? = null
+
+    fun setAccessToken(token: String) {
+        accessToken= token
+    }
 
     fun refresh() {
+        val token = accessToken ?: run {
+            _uiState.value = ShowcaseUiState.Error("Please log in first")
+            return@run
+        }
         viewModelScope.launch {
-            _state.value = ShowcaseUiState.Loading
+            _uiState.value = ShowcaseUiState.Loading
             try {
                 val items = repository.loadItems()
-                _state.value = ShowcaseUiState.Success(items)
+                _uiState.value = ShowcaseUiState.Success(items)
             } catch (error: Exception) {
-                _state.value = ShowcaseUiState.Error(error.message ?: "Network Error")
+                _uiState.value = ShowcaseUiState.Error(error.message ?: "Network Error")
             }
         }
 
