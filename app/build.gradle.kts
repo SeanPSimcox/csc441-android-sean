@@ -52,4 +52,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.0")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10")
 }
