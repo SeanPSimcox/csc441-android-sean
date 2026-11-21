@@ -23,7 +23,12 @@ class LoginViewModel: ViewModel() {
                 _state.value = LoginUiState(loading = false)
                 onSuccess(token)
             } catch (error: Exception) {
+                error.printStackTrace()
 
+                _state.value = LoginUiState(
+                    loading = false,
+                    failed = true
+                )
             }
         }
     }

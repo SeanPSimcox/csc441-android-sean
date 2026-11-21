@@ -71,7 +71,11 @@ fun CounterDemo() {
 
 // --- Class 9 ~ Step 2: one owner for the data
 @Composable
-fun CampusAppScreen(showcaseState: ShowcaseUiState, onRefreshShowcase: () -> Unit, modifier: Modifier = Modifier) {
+fun CampusAppScreen(showcaseState: ShowcaseUiState,
+                    loginState: LoginUiState,
+                    onRefreshShowcase: () -> Unit,
+                    onLogin: (String, String, () -> Unit) -> Unit,
+                    modifier: Modifier = Modifier) {
     // ---Class 7: Step 2: The list lives in state ---
     val ports = remember {
         mutableStateListOf(
@@ -107,7 +111,7 @@ fun CampusAppScreen(showcaseState: ShowcaseUiState, onRefreshShowcase: () -> Uni
             onSeeAll = { currentScreen = "list" },
             // --- Lab 9 ~ Task 2: HomeScreen can request the About screen ---
             onAbout = { currentScreen = "about" },
-            onInterestsClick = {currentScreen = "interests"}
+            onInterestsClick = { currentScreen = "login" }
         )
 
         "list" -> ListScreen(
@@ -127,8 +131,18 @@ fun CampusAppScreen(showcaseState: ShowcaseUiState, onRefreshShowcase: () -> Uni
 
         "interests" -> InterestsScreen(
             state = showcaseState,
-            onBack = {currentScreen = "home" },
+            onBack = { currentScreen = "home" },
             onRefresh = onRefreshShowcase,
+            modifier = modifier
+        )
+
+        "login" -> LoginScreen(
+            state = loginState,
+            onLogin = { email, password ->
+                onLogin(email, password) {
+                    currentScreen = "interests"
+                }
+            },
             modifier = modifier
         )
     }
